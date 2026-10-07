@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ms" dir="ltr">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Kuiz Interaktif</title>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+    options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+  };
+</script>
+<style>
+
+:root{ --bg:#0b1220; --panel:#111a2e; --text:#e5e7eb; --muted:#aab3c5; --primary:#6366f1; --primary2:#22c55e; --border:color-mix(in srgb, var(--text) 18%, transparent); --option-bg:color-mix(in srgb, var(--panel) 88%, var(--primary) 12%); --option-hover:color-mix(in srgb, var(--panel) 80%, var(--primary) 20%); --option-active:color-mix(in srgb, var(--panel) 72%, var(--primary) 28%); --radius:16px; --app-font:'Noto Sans', 'Segoe UI', Tahoma, Arial, sans-serif; }
+body{ margin:0; font-family:var(--app-font); background:var(--bg); color:var(--text); min-height:100vh; display:flex; justify-content:center; padding:20px; box-sizing:border-box; }
+button,input,table,th,td,label,h1,h2,h3,p,div{ font-family:var(--app-font); }
+.card{ background:var(--panel); width:100%; max-width:600px; border-radius:var(--radius); padding:24px; box-shadow:0 10px 30px rgba(0,0,0,0.3); border:1px solid var(--border); }
+h1{ margin:0 0 10px; font-size:22px; text-align:center; } .desc{ color:var(--muted); font-size:13px; margin-bottom:20px; text-align:center; line-height:1.5; }
+.quizLogoWrap{ width:162px; height:162px; border-radius:50%; overflow:hidden; margin:4px auto 18px; border:1px solid var(--border); background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; }
+.quizLogo{ width:100%; height:100%; object-fit:cover; display:block; }
+.loginIntro{ text-align:center; }
+.loginForm{ width:100%; max-width:420px; margin:0 auto; }
+.loginForm label{ text-align:left; }
+.loginForm input{ text-align:left; }
+.reviewBox{ margin-top:20px; border-top:1px solid var(--border); padding-top:18px; }
+.reviewItem{ border:1px solid var(--border); border-radius:12px; padding:14px; margin-top:12px; background:color-mix(in srgb, var(--panel) 90%, var(--primary) 10%); }
+.badge{ display:inline-block; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:800; margin-bottom:8px; }
+.badge.ok{ background:rgba(34,197,94,.16); color:var(--primary2); }
+.badge.no{ background:rgba(239,68,68,.16); color:#ef4444; }
+.reviewMeta{ font-size:13px; line-height:1.55; color:var(--text); }
+.reviewMeta b{ color:var(--muted); }
+label{ font-size:10px; text-transform:uppercase; font-weight:bold; color:var(--muted); margin-bottom:4px; display:block; }
+.loginForm label{ font-size:12px; }
+.loginForm input{ padding:10px 12px; }
+input{ width:100%; padding:12px; border-radius:10px; border:1px solid var(--border); background:color-mix(in srgb, var(--panel) 92%, var(--text) 8%); color:var(--text); margin-bottom:15px; box-sizing:border-box; outline:none; }
+.loginForm input{ padding:10px 12px; }
+.timerBox{ width:max-content; min-width:118px; margin:0 auto 14px; padding:8px 16px; border-radius:999px; background:linear-gradient(135deg, color-mix(in srgb, var(--primary) 18%, var(--panel) 82%), color-mix(in srgb, var(--primary2) 16%, var(--panel) 84%)); border:1px solid color-mix(in srgb, var(--primary) 42%, var(--border)); color:var(--primary2); font-size:17px; font-weight:800; letter-spacing:.04em; text-align:center; box-shadow:0 8px 22px rgba(0,0,0,.16); }
+.timeEndNotice{ margin:0 0 16px; padding:12px 14px; border-radius:14px; background:color-mix(in srgb, #ef4444 12%, var(--panel) 88%); border:1px solid color-mix(in srgb, #ef4444 46%, var(--border)); color:var(--text); text-align:center; font-size:15px; font-weight:800; }
+.btn{ background:var(--primary); color:#fff; border:none; padding:12px 20px; border-radius:10px; cursor:pointer; font-weight:800; width:100%; transition:0.2s; box-shadow:0 8px 18px rgba(0,0,0,.22); }
+.btn:hover{ filter:brightness(1.1); }
+.btn-back{ background:linear-gradient(135deg, var(--primary), var(--primary2)); color:#fff; border:1px solid rgba(255,255,255,.35); box-shadow:0 0 0 3px rgba(255,255,255,.10), 0 8px 22px rgba(0,0,0,.25); }
+.btn-back:hover{ filter:brightness(1.18); box-shadow:0 0 0 4px rgba(255,255,255,.14), 0 10px 26px rgba(0,0,0,.30); }
+.opt{ display:block; padding:14px; border:1px solid color-mix(in srgb, var(--primary) 35%, var(--border)); border-radius:10px; margin-bottom:10px; cursor:pointer; transition:0.2s; background:var(--option-bg); color:var(--text); font-weight:600; }
+.opt:hover{ background:var(--option-hover); border-color:color-mix(in srgb, var(--primary) 55%, var(--border)); } .opt.active{ border-color:var(--primary); background:var(--option-active); box-shadow:0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent); }
+.bar{ height:6px; background:rgba(255,255,255,0.05); border-radius:3px; margin-bottom:20px; overflow:hidden; }
+.fill{ height:100%; background:var(--primary); transition:width 0.3s; }
+table{ width:100%; border-collapse:collapse; margin-top:15px; font-size:12px; }
+th, td{ text-align:left; padding:8px; border-bottom:1px solid var(--border); }
+@media (min-width: 901px){ body{ overflow:hidden; } .card{ max-height:calc(100vh - 40px); overflow:auto; } }
+
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+<script>
+const DATA = {"title":"Kuiz Interaktif","desc":"Jawab semua soalan dan semak maklum balas di akhir kuiz.","lang":"ms","randQ":false,"randA":false,"saveData":false,"classLbl":"Kelas","sheetUrl":"","logoUrl":"","timerMinutes":0,"hasExplanation":true,"questions":[{"q":"Apakah matlamat utama penggunaan Artificial Intelligence (AI) secara terancang dalam bengkel pembangunan Self-Instructional Material (SIM) Digital ini?","choices":["Membina satu topik SIM Digital lengkap yang boleh dilaksanakan secara kendiri serta mempercepat kesiapsiagaan program ODL.","Menggantikan peranan pensyarah secara automatik dalam menyampaikan kuliah secara fizikal.","Menjana soalan peperiksaan akhir semester tanpa memerlukan sebarang semakan atau pengesahan akademik.","Mengurangkan kadar Student Learning Time (SLT) bagi setiap topik kursus kepada separuh."],"answerIndex":0,"explain":"AI digunakan secara sistematik untuk mereka bentuk dan membangunkan topik SIM kendiri serta membina workflow praktikal bagi menyokong keperluan akreditasi ODL/MQA.","rationales":["AI digunakan secara sistematik untuk mereka bentuk dan membangunkan topik SIM kendiri serta membina workflow praktikal bagi menyokong keperluan akreditasi ODL/MQA.","AI berfungsi sebagai alat pembantu pembangunan bahan pembelajaran kendiri dan bukannya pengganti peranan pedagogi pensyarah.","Semua bahan dan output yang dijana oleh AI tetap memerlukan semakan akademik, fakta, dan pedagogi oleh pensyarah.","Penggunaan AI bertujuan mempercepat proses pembangunan bahan, bukannya mengurangkan standard jam pembelajaran (SLT) pelajar."]},{"q":"Dalam AI Development Toolkit yang diperkenalkan, apakah peranan utama Gemini Notebook?","choices":["Berfungsi sebagai pusat kimpulan sumber (Sources), analisis kandungan, dan penjanaan Audio/Video Overview.","Digunakan khas untuk menyunting reka bentuk grafik dan kemasan susun atur akhir sahaja.","Menjadi platform LMS utama untuk menggantikan tapak pengajaran sedia ada di UNITEN.","Menguruskan pendaftaran dan pemantauan gred pelajar bagi program pembelajaran jarak jauh."],"answerIndex":0,"explain":"Gemini Notebook bertindak sebagai hab utama untuk menganalisis dokumen kurikulum, istilah, contoh, dan menjana gambaran keseluruhan media.","rationales":["Gemini Notebook bertindak sebagai hab utama untuk menganalisis dokumen kurikulum, istilah, contoh, dan menjana gambaran keseluruhan media.","Menyunting grafik dan kemasan akhir visual merupakan peranan perisian penyuntingan seperti Canva.","Gemini Notebook ialah alat pembina kandungan AI, manakala integrasi platform tetap dijalankan di LMS UNITEN.","Pengurusan gred dan pendaftaran pelajar adalah fungsi sistem pengurusan pembelajaran (LMS) dan bukannya Gemini Notebook."]},{"q":"Apakah peranan Canva dalam aliran kerja (workflow) pembangunan SIM Digital yang ditetapkan?","choices":["Digunakan untuk tujuan penyuntingan (editing) dan kemasan akhir visual sahaja.","Menjana skrip video dan papan cerita (storyboard) pembelajaran secara berasaskan teks.","Menganalisis hasil pembelajaran kursus (CLO) dan memetakan Student Learning Time (SLT).","Membangunkan kuiz formatif XML untuk diimport terus ke dalam LMS UNITEN."],"answerIndex":0,"explain":"Canva khusus digunakan pada fasa akhir untuk memperkemas susun atur visual dan keterbacaan media sebelum diintegrasikan.","rationales":["Canva khusus digunakan pada fasa akhir untuk memperkemas susun atur visual dan keterbacaan media sebelum diintegrasikan.","Penjanaan skrip dan papan cerita dilakukan menggunakan ChatGPT atau ShotBoard, bukannya Canva.","Analisis alignment dan CLO dilakukan melalui AI.Reviewer, Gemini, atau ChatGPT pada peringkat awal.","Penjanaan kuiz interaktif format XML menggunakan aplikasi seperti Quiz2XML atau Quiz2HTML."]},{"q":"Empat blok utama kekal sebagai struktur asas SIM Digital. Apakah urutan aliran pembelajaran kendiri tersebut?","choices":["WATCH -> READ -> DO -> REFLECT","PLAN -> CREATE -> PACKAGE -> BUILD","SOURCE -> PROMPT -> STRUCTURE -> VISUAL","ANALYZE -> DESIGN -> DEVELOP -> EVALUATE"],"answerIndex":0,"explain":"Struktur asas SIM Digital dibina mengikut empat blok berurutan: menonton media (Watch), membaca bahan (Read), melakukan aktiviti (Do), dan membuat refleksi (Reflect).","rationales":["Struktur asas SIM Digital dibina mengikut empat blok berurutan: menonton media (Watch), membaca bahan (Read), melakukan aktiviti (Do), dan membuat refleksi (Reflect).","Plan-Create-Package ialah fasa proses pembangunan pada Hari 1, bukannya blok struktur pembelajaran pelajar.","Ini merupakan elemen komponen toolkit penjanaan kandungan AI, bukannya aliran alur pembelajaran kendiri.","Ini merujuk kepada model reka bentuk instruksional ADDIE, bukannya 4 blok struktur SIM Digital."]},{"q":"Mengapakah pembinaan satu topik SIM Digital semasa bengkel dianggap penting walaupun sasaran akhirnya adalah untuk keseluruhan kursus?","choices":["Topik tersebut berfungsi sebagai model kerja (working model) yang boleh diulang untuk topik-topik seterusnya.","Kerana MQA hanya menilai satu topik sahaja dalam proses permohonan akreditasi ODL.","Kerana perisian AI tidak mampu menjana bahan melebihi satu topik pada satu-satu masa.","Kerana LMS UNITEN mengehadkan muat naik kandungan kepada satu topik sahaja bagi setiap pensyarah."],"answerIndex":0,"explain":"Membina satu topik membolehkan pensyarah menguasai workflow AI yang praktikal dan terpiawai untuk direplikasi bagi topik lain.","rationales":["Membina satu topik membolehkan pensyarah menguasai workflow AI yang praktikal dan terpiawai untuk direplikasi bagi topik lain.","MQA memerlukan kesiapsiagaan bahan bagi keseluruhan kursus, namun bengkel menyediakan standard contoh awal.","AI mampu memproses pelbagai bahan, tetapi fasa latihan bengkel difokuskan kepada satu topik untuk penguasaan kemahiran.","Platform LMS tidak menghadkan topik, sebaliknya fokus satu topik adalah untuk tujuan strategi pengajaran bengkel."]},{"q":"Semasa fasa Prompt Lab pada Hari 1, apakah tiga struktur formula prompt yang dibina oleh peserta?","choices":["Konteks - Arahan - Output","Input - Proses - Maklum Balas","Tajuk - Soalan - Jawapan","Objektif - Strategi - Penilaian"],"answerIndex":0,"explain":"Formula prompt berstruktur yang digunakan dalam bengkel merangkumi elemen Konteks, Arahan, dan Output bagi memastikan hasil AI tepat.","rationales":["Formula prompt berstruktur yang digunakan dalam bengkel merangkumi elemen Konteks, Arahan, dan Output bagi memastikan hasil AI tepat.","Ini merujuk kepada konsep asas pemprosesan komputer, bukannya struktur Prompt Lab yang dinyatakan.","Ini adalah format asas kuiz dan bukannya formula pembinaan arahan prompt AI.","Ini merujuk kepada komponen reka bentuk pengajaran umum, bukannya formula prompting."]},{"q":"Manakah antara aplikasi sokongan penceramah berikut digunakan khas untuk menghasilkan komik pembelajaran daripada nota atau bahan bacaan?","choices":["NLM2Comixs","ShotBoard","VoxDrop","TinjauGen"],"answerIndex":0,"explain":"NLM2Comixs merupakan aplikasi sokongan khusus untuk menukar nota pembelajaran kepada format visual komik.","rationales":["NLM2Comixs merupakan aplikasi sokongan khusus untuk menukar nota pembelajaran kepada format visual komik.","ShotBoard digunakan untuk menyusun papan cerita (storyboard) video, bukannya komik.","VoxDrop digunakan untuk penjanaan audio atau suara (voiceover).","TinjauGen digunakan untuk membina soalan refleksi atau tinjauan."]},{"q":"Apakah fokus utama aktiviti hands-on yang dilaksanakan pada HARI 1 bengkel?","choices":["Menghasilkan SIM Working Pack yang merangkumi blueprint, kandungan Watch-Read-Do-Reflect, dan SLT.","Mengintegrasikan semua bahan ke dalam platform LMS UNITEN dan melakukan pengujian akhir.","Melaksanakan sesi Gallery Walk dan pembentangan plenari di hadapan penilai MQA.","Menilai ketepatan teknikal pelayan (server) LMS UNITEN berasaskan peranti mudah alih."],"answerIndex":0,"explain":"Hari 1 berfokus kepada penjajaran, pembangunan mikro-kandungan, media, dan penyediaan SIM Working Pack di SIM Studio.","rationales":["Hari 1 berfokus kepada penjajaran, pembangunan mikro-kandungan, media, dan penyediaan SIM Working Pack di SIM Studio.","Aktiviti integrasi LMS dan pengujian laluan pelajar dilaksanakan pada Hari 2.","Showcase dan pembentangan plenari merupakan aktiviti kemuncak pada penghujung Hari 2.","Pemeriksaan teknikal LMS dan paparan mudah alih dijalankan semasa fasa integrasi di Hari 2."]},{"q":"Aplikasi Gemini Canvas digunakan dalam fasa 'Working note' pada Hari 1. Apakah kegunaan utamanya?","choices":["Menyusun overview, outcome, learner journey, dan draf kandungan boleh sunting.","Merakam dan menyunting audio voiceover secara terus dari pelayar web.","Memuat naik fail pakej SCORM terus ke pangkalan data MQA.","Menguruskan semakan rakan sejawat (peer QA) secara bersemuka."],"answerIndex":0,"explain":"Gemini Canvas membolehkan pensyarah menyediakan struktur teks dan bahan interaktif yang mudah diubah suai.","rationales":["Gemini Canvas membolehkan pensyarah menyediakan struktur teks dan bahan interaktif yang mudah diubah suai.","Penjanaan audio menggunakan perisian media seperti VoxDrop atau alatan video AI.","Gemini Canvas bukannya alat muat naik dokumen rasmi akreditasi.","Semakan peer QA menggunakan SIM QA Checklist pada Hari 2."]},{"q":"Apakah kegunaan utama aplikasi 'SIM Studio' yang dibangunkan khas oleh penceramah?","choices":["Menghasilkan SIM dalam bentuk pakej SCORM (scorm-package) untuk diintegrasikan ke LMS.","Menggantikan perisian Canvas untuk mereka bentuk grafik poster.","Menyediakan perkhidmatan persidangan video bagi kuliah langsung.","Menyemak kehadiran pensyarah sepanjang dua hari bengkel."],"answerIndex":0,"explain":"SIM Studio membolehkan penggabungan pelbagai aset SIM menjadi satu pakej SCORM yang sedia di muat naik.","rationales":["SIM Studio membolehkan penggabungan pelbagai aset SIM menjadi satu pakej SCORM yang sedia di muat naik.","Reka bentuk grafik dilakukan di Canva, manakala SIM Studio berfokus pada pengagregatan pakej SCORM.","SIM Studio direka untuk pembelajaran kendiri asinkronus, bukannya persidangan video langsung.","SIM Studio ialah aplikasi pembangunan kandungan pengajaran, bukannya sistem kehadiran."]},{"q":"Antara aplikasi sokongan berikut, yang manakah digunakan untuk membina soalan kuiz dan menukarkannya kepada format interaktif Web/LMS?","choices":["TUG2HTML, Quiz2HTML, dan Quiz2XML","ShotBoard dan VoxDrop","InstructEase dan TinjauGen","HeyGen dan Google Vids"],"answerIndex":0,"explain":"Aplikasi ini dibangunkan khusus untuk menjana kuiz dan pentaksiran formatif dalam format kod HTML atau XML yang mesra LMS.","rationales":["Aplikasi ini dibangunkan khusus untuk menjana kuiz dan pentaksiran formatif dalam format kod HTML atau XML yang mesra LMS.","Aplikasi ini digunakan untuk pembangunan media video dan audio.","InstructEase digunakan untuk arahan pelajar, manakala TinjauGen untuk borang/soalan refleksi.","Ini merupakan alatan penjanaan video AI, bukannya penjana kuiz HTML/XML."]},{"q":"Pada Hari 2, peserta dikehendaki menjalankan 'Learner-path testing'. Apakah tujuan utama aktiviti ini?","choices":["Menguji dan mengalami keseluruhan topik SIM dari sudut pandangan pelajar dari awal hingga tamat.","Menjana prompt AI baharu untuk menggantikan bahan bacaan asal.","Mengira markah peperiksaan akhir bagi kumpulan pelajar ODL.","Memuat turun fail pangkalan data utama daripada pelayan LMS UNITEN."],"answerIndex":0,"explain":"Learner-path testing memastikan navigation, kelancaran media, kejelasan arahan, dan fungsi teknikal berjalan sempurna sebelum dinilai rakan sejawat.","rationales":["Learner-path testing memastikan navigation, kelancaran media, kejelasan arahan, dan fungsi teknikal berjalan sempurna sebelum dinilai rakan sejawat.","Penjanaan bahan AI dilakukan pada Hari 1, manakala Hari 2 berfokus pada integrasi dan pengujian.","Aktiviti ini adalah fasa penyemakan reka bentuk bahan pembelajaran, bukannya pengiraan gred pelajar sebenar.","Pengujian ini dilakukan pada paparan mesra pengguna (device preview), bukannya muat turun pangkalan data."]},{"q":"Berdasarkan Checklist Kualiti SIM Digital, apakah kriteria wajib bagi komponen Pentaksiran Formatif?","choices":["Mempunyai jawapan, rasional, atau maklum balas yang sesuai.","Mengandungi sekurang-kurangnya 50 soalan berasaskan esai panjang.","Mengharuskan gred disemak secara manual oleh pensyarah dalam tempoh 24 jam.","Mewajibkan penggunaan kamera pengawasan (proctoring) semasa pelajar menjawab."],"answerIndex":0,"explain":"Pentaksiran formatif dalam pembelajaran kendiri wajib disertai jawapan dan rasional/maklum balas untuk bimbingan kendiri pelajar.","rationales":["Pentaksiran formatif dalam pembelajaran kendiri wajib disertai jawapan dan rasional/maklum balas untuk bimbingan kendiri pelajar.","Pentaksiran SIM berasaskan penilaian formatif ringkas yang membimbing pemahaman, bukannya ujian esai yang terlalu panjang.","Pentaksiran SIM direka untuk pembelajaran kendiri di mana maklum balas diberikan secara automatik.","Ujian formatif kendiri tidak memerlukan sistem kawalan proctoring yang ketat seperti peperiksaan sumatif."]},{"q":"Apakah fungsi utama aplikasi InstructEase dalam fasa pembangunan SIM?","choices":["Membina arahan pembelajaran (learner instructions) yang jelas mengenai tindakan, masa, dan output pelajar.","Menjana watak komik automatik daripada fail audio.","Menyunting saiz video AI supaya sesuai dengan skrin telefon bimbit.","Menilai peratusan plagiarisme dokumen rujukan."],"answerIndex":0,"explain":"InstructEase membantu pensyarah menyediakan arahan yang tersusun agar pelajar tahu apa yang perlu dilakukan pada setiap blok.","rationales":["InstructEase membantu pensyarah menyediakan arahan yang tersusun agar pelajar tahu apa yang perlu dilakukan pada setiap blok.","Penjanaan komik dilakukan oleh NLM2Comixs, bukannya InstructEase.","Kemasan visual dilakukan di Canva atau tetapan embed LMS.","InstructEase khusus untuk mereka bentuk arahan pembelajaran (instructions), bukannya pengesan plagiarisme."]},{"q":"Apakah syarat persediaan yang PERLU disediakan oleh pensyarah SEBELUM hadir ke bengkel?","choices":["Akses LMS UNITEN, satu topik kursus berserta CLO, contoh pentaksiran, laptop, dan akaun AI (Gemini/ChatGPT/Canva).","Dokumen kelulusan rasmi MQA untuk kesemua 14 minggu pengkuliahan.","Fail projek SCORM yang telah siap dibina menggunakan SIM Studio.","Rakaman video studio profesional berdurasi 2 jam bagi setiap topik."],"answerIndex":0,"explain":"Persediaan ini memastikan pensyarah dapat terus melaksanakan aktiviti hands-on secara langsung menggunakan bahan kursus sebenar.","rationales":["Persediaan ini memastikan pensyarah dapat terus melaksanakan aktiviti hands-on secara langsung menggunakan bahan kursus sebenar.","Kelulusan MQA adalah matlamat jangka panjang; pensyarah hanya perlu membawa satu topik kursus untuk dibina semasa bengkel.","SIM Studio akan dipelajari dan diguna pakai semasa bengkel, bukannya disediakan sebelum bengkel.","Media dan video mikro akan dibangunkan semasa bengkel menggunakan alatan AI."]},{"q":"Semua bahan yang dijana menggunakan perisian AI wajib melalui proses semakan oleh pensyarah. Apakah aspek utama yang perlu disemak?","choices":["Fakta, sumber, pedagogi, hak cipta, dan kebolehcapaian (accessibility).","Jumlah perkataan agar melebihi 10,000 kata bagi satu topik.","Penterjemahan ke dalam sekurang-kurangnya tiga bahasa antarabangsa.","Tanda tangan digital daripada pihak pengurusan tertinggi MQA."],"answerIndex":0,"explain":"Pensyarah bertanggungjawab memastikan ketepatan akademik, etika hak cipta, dan kebolehcapaian bahan sebelum diterbitkan.","rationales":["Pensyarah bertanggungjawab memastikan ketepatan akademik, etika hak cipta, dan kebolehcapaian bahan sebelum diterbitkan.","Kualiti SIM mengutamakan mikro-kandungan yang padat dan jelas, bukannya jumlah perkataan yang terlalu panjang.","Tiada keperluan penterjemahan pelbagai bahasa ditetapkan dalam kriteria asas kualiti SIM.","Semakan kandungan adalah tanggungjawab akademik pensyarah sebelum penyerahan modul."]},{"q":"Apakah peranan komponen 'REFLECT' dalam struktur 4 blok SIM Digital?","choices":["Membantu pelajar menghubungkan pembelajaran dengan aplikasi atau pengalaman kendiri.","Menyediakan pautan muat turun slaid kuliah utama dalam format PDF.","Memaparkan video pengenalan ringkas daripada penceramah.","Menjana markah peperiksaan akhir secara automatik ke dalam LMS."],"answerIndex":0,"explain":"Komponen REFLECT memberi peluang kepada pelajar mendalami pemahaman dan membuat refleksi kendiri terhadap topik yang dipelajari.","rationales":["Komponen REFLECT memberi peluang kepada pelajar mendalami pemahaman dan membuat refleksi kendiri terhadap topik yang dipelajari.","Slaid dan nota berada di bawah komponen READ.","Video pengenalan tergolong di bawah komponen WATCH.","Refleksi merupakan aktiviti pembentukan pemahaman kendiri, bukannya peperiksaan sumatif."]}]}; 
+const UI = {"name":"Nama Penuh","class":"Kelas","start":"Mula Kuiz","next":"Seterusnya","back":"Kembali","finish":"Tamat","retake":"Ulang Kuiz","rank":"Kedudukan 10 Teratas","saving":"Menyimpan data...","result":"Keputusan","q":"S","tableName":"Nama","tableClass":"Kelas","percent":"%","alertInfo":"Sila isi maklumat.","alertChoose":"Sila pilih jawapan.","review":"Semakan Jawapan","questionLabel":"Soalan","answerLabel":"Jawapan","explanationLabel":"Penerangan","correct":"Betul","incorrect":"Tidak betul","feedbackCorrect":"Jawapan betul, tiada ulasan.","feedbackWrong":"Jawapan belum menepati konsep utama.","noRefNote":"Tiada penerangan ditemui dalam fail soalan yang dimuat naik.","timeEnd":"Masa Tamat"};
+let state = { mode:'login', idx:0, ans:[], name:'', class:'', qs:[], loading:false, ranking:[], endTime:0, remaining:0, timeEnded:false };
+let timerInterval = null;
+function esc(v){ return String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function formatTime(ms){ const total = Math.max(0, Math.ceil(ms/1000)); const m = Math.floor(total/60); const s = total % 60; return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
+function startTimer(){ if(timerInterval) clearInterval(timerInterval); if(!DATA.timerMinutes) return; state.endTime = Date.now() + DATA.timerMinutes * 60000; timerInterval = setInterval(() => { state.remaining = state.endTime - Date.now(); if(state.remaining <= 0){ clearInterval(timerInterval); timerInterval = null; state.timeEnded = true; finish(); } else if(state.mode === 'quiz') { const el = document.getElementById('timerBox'); if(el) el.textContent = formatTime(state.remaining); } }, 1000); }
+function timerHtml(){ return DATA.timerMinutes && state.mode === 'quiz' ? '<div class="timerBox" id="timerBox">' + formatTime(state.endTime - Date.now()) + '</div>' : ''; }
+function buildReview(){
+  return '<div class="reviewBox"><h3 style="text-align:center; margin:0 0 12px;">' + UI.review + '</h3>' +
+    state.qs.map((q,i) => {
+      const picked = state.ans[i];
+      const ok = picked === q.answerIndex;
+      const userAns = picked === null || picked === undefined ? '-' : q.choices[picked];
+      const selectedRationale = q.rationales && picked !== null && picked !== undefined ? q.rationales[picked] : "";
+      const correctRationale = q.rationales ? q.rationales[q.answerIndex] : "";
+      const fb = selectedRationale || correctRationale || q.explain || (ok ? UI.feedbackCorrect : UI.feedbackWrong + " " + UI.noRefNote);
+      return '<div class="reviewItem">' +
+        '<span class="badge ' + (ok ? 'ok' : 'no') + '">' + (ok ? UI.correct : UI.incorrect) + '</span>' +
+        '<div class="reviewMeta"><b>' + UI.questionLabel + ':</b> ' + esc(q.q) + '</div>' +
+        '<div class="reviewMeta"><b>' + UI.answerLabel + ':</b> ' + esc(userAns) + '</div>' +
+        '<div class="reviewMeta"><b>' + UI.explanationLabel + ':</b> ' + esc(fb) + '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(state.mode==='login'){
+    const logoHtml = DATA.logoUrl ? '<div class="quizLogoWrap"><img class="quizLogo" src="' + esc(DATA.logoUrl) + '" alt="Logo"></div>' : '';
+    app.innerHTML = '<div class="loginIntro">' + logoHtml + '<h1>' + DATA.title + '</h1><p class="desc">' + DATA.desc + '</p></div>' +
+      '<div class="loginForm"><label>' + UI.name + '</label><input type="text" id="u_name" value="' + esc(state.name) + '">' +
+      '<label>' + UI.class + '</label><input type="text" id="u_class" value="' + esc(state.class) + '">' +
+      '<button class="btn" onclick="start()">' + UI.start + '</button></div>';
+  } else if(state.mode==='quiz'){
+    const q = state.qs[state.idx];
+    const backBtn = state.idx > 0 ? '<button class="btn btn-back" style="margin-top:10px;" onclick="back()">' + UI.back + '</button>' : '';
+    const finishBtn = state.idx === state.qs.length - 1 ? '<button class="btn" style="margin-top:10px;" onclick="next()">' + UI.finish + '</button>' : '';
+    app.innerHTML = timerHtml() + '<div class="bar"><div class="fill" style="width:' + ((state.idx)/state.qs.length)*100 + '%"></div></div>' +
+      '<div style="font-size:11px; color:var(--muted); margin-bottom:10px;">' + UI.q + ' ' + (state.idx+1) + ' / ' + state.qs.length + '</div>' +
+      '<h2 style="font-size:17px; margin-bottom:20px;">' + q.q + '</h2>' +
+      q.choices.map((c,i) => '<div class="opt ' + (state.ans[state.idx]===i?'active':'') + '" onclick="setAns(' + i + ')">' + c + '</div>').join('') +
+      finishBtn + backBtn;
+  } else if(state.mode==='result'){
+    let score = state.ans.reduce((acc, a, i) => acc + (a === state.qs[i].answerIndex ? 1 : 0), 0);
+    let pct = Math.round((score/state.qs.length)*100);
+    let html = '<h1>' + UI.result + '</h1>' + (state.timeEnded ? '<div class="timeEndNotice">' + UI.timeEnd + '</div>' : '') + '<div style="font-size:48px; font-weight:900; color:var(--primary2);">' + pct + '% (' + score + '/' + state.qs.length + ')</div>';
+    html += buildReview();
+    if(DATA.saveData){
+      html += '<div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;"><h3 style="text-align:center;">' + UI.rank + '</h3>';
+      if(state.loading) html += '<p>' + UI.saving + '</p>';
+      else if(state.ranking.length > 0) {
+        html += '<table><tr><th>#</th><th>' + UI.tableName + '</th><th>' + UI.tableClass + '</th><th>' + UI.percent + '</th></tr>' + 
+          state.ranking.map((r,i) => '<tr><td>' + (i+1) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.class) + '</td><td>' + esc(r.percent) + '</td></tr>').join('') + '</table>';
+      }
+      html += '</div>';
+    }
+    html += '<button class="btn" style="margin-top:20px;" onclick="location.reload()">' + UI.retake + '</button>';
+    app.innerHTML = html;
+  }
+  if (window.MathJax && window.MathJax.typeset) window.MathJax.typeset();
+}
+function start(){
+  state.name = document.getElementById('u_name').value.trim(); 
+  state.class = document.getElementById('u_class').value.trim();
+  if(!state.name || !state.class) return alert(UI.alertInfo);
+  state.qs = JSON.parse(JSON.stringify(DATA.questions));
+  if(DATA.randQ) state.qs.sort(() => Math.random()-0.5);
+  if(DATA.randA) state.qs.forEach(q => {
+    const originalCorrect = q.choices[q.answerIndex];
+    const rationales = Array.isArray(q.rationales) ? q.rationales : [];
+    const pairs = q.choices.map((choice, idx) => ({ choice, rationale: rationales[idx] || "" }));
+    pairs.sort(() => Math.random()-0.5);
+    q.choices = pairs.map(p => p.choice);
+    q.rationales = pairs.map(p => p.rationale);
+    q.answerIndex = q.choices.indexOf(originalCorrect);
+  });
+  state.ans = new Array(state.qs.length).fill(null);
+  state.timeEnded = false;
+  state.mode = 'quiz'; startTimer(); render();
+}
+function setAns(i){ state.ans[state.idx] = i; if(state.idx < state.qs.length - 1){ state.idx++; } render(); }
+function back(){ if(state.idx > 0){ state.idx--; render(); } }
+function next(){
+  if(state.ans[state.idx]===null) return alert(UI.alertChoose);
+  if(state.idx < state.qs.length - 1){ state.idx++; render(); }
+  else { finish(); }
+}
+async function finish(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  state.mode = 'result'; render();
+  if(DATA.saveData && DATA.sheetUrl){
+    state.loading = true; render();
+    let score = state.ans.reduce((acc, a, i) => acc + (a === state.qs[i].answerIndex ? 1 : 0), 0);
+    let pct = Math.round((score/state.qs.length)*100);
+    try {
+      await fetch(DATA.sheetUrl, { method:'POST', body: JSON.stringify({name:state.name, class:state.class, score:score, percent:pct}), mode:'no-cors' });
+      setTimeout(async () => {
+        try { const res = await fetch(DATA.sheetUrl); state.ranking = await res.json(); render(); } catch(e){}
+        state.loading = false; render();
+      }, 1500);
+    } catch(e){ state.loading = false; render(); }
+  }
+}
+render();
+</script>
+</body></html>
